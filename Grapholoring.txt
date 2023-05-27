@@ -1,0 +1,149 @@
+class GraphColoring:
+    def __init__(self, graph):
+        self.graph = graph
+        self.num_vertices = len(graph)
+        self.colors = [0] * self.num_vertices
+        self.solution = None
+        self.min_colors = float('inf')
+
+    def is_safe(self, vertex, color):
+        # Check if it is safe to color the vertex with the given color
+        for i in range(self.num_vertices):
+            # Check if there is an edge between the vertex and its neighbors
+            # If there is an edge and the neighbor has the same color, it is not safe
+            if self.graph[vertex][i] and self.colors[i] == color:
+                return False
+        return True
+
+    def backtrack(self, vertex):
+        # Base case: All vertices have been colored
+        if vertex == self.num_vertices:
+            # Count the number of distinct colors used in the current coloring
+            used_colors = set(self.colors)
+            num_colors = len(used_colors)
+            # Update the minimum number of colors and the current solution
+            if num_colors < self.min_colors:
+                self.min_colors = num_colors
+                self.solution = self.colors.copy()
+            return
+
+        # Try all possible colors for the current vertex
+        for color in range(1, self.num_vertices + 1):
+            if self.is_safe(vertex, color):
+                # Assign the color to the vertex
+                self.colors[vertex] = color
+                # Move to the next vertex
+                self.backtrack(vertex + 1)
+                # Backtrack by removing the color assignment
+                self.colors[vertex] = 0
+
+    def solve(self):
+        # Start the backtracking process from the first vertex
+        self.backtrack(0)
+        # Return the minimum number of colors and the coloring solution
+        return self.solution, self.min_colors
+
+# Example usage
+graph = [
+    [0, 1, 1, 1],
+    [1, 0, 1, 0],
+    [1, 1, 0, 1],
+    [1, 0, 1, 0]
+]
+
+graph_coloring = GraphColoring(graph)
+solution, min_colors = graph_coloring.solve()
+
+print("Minimum number of colors needed:", min_colors)
+print("Coloring solution:", solution)
+
+
+
+------------------------------------------------------------------------------------------------------------------------------
+
+C++
+
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <climits>
+
+using namespace std;
+
+class Graph {
+    int V;
+    vector<vector<int>> adj;
+
+public:
+    Graph(int v) : V(v), adj(v, vector<int>(v, 0)) {}
+
+    void addEdge(int u, int v) {
+        adj[u][v] = 1;
+        adj[v][u] = 1;
+    }
+
+    bool isSafe(int v, vector<int>& colors, int c) {
+        for (int i = 0; i < V; ++i) {
+            if (adj[v][i] && colors[i] == c) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    bool graphColoringUtil(int m, vector<int>& colors, int v, int& numSolutions) {
+        if (v == V) {
+            ++numSolutions;
+            cout << "Solution " << numSolutions << ": ";
+            for (int i = 0; i < V; ++i) {
+                cout << colors[i] << " ";
+            }
+            cout << endl;
+            return true;
+        }
+
+        for (int c = 1; c <= m; ++c) {
+            if (isSafe(v, colors, c)) {
+                colors[v] = c;
+                if (graphColoringUtil(m, colors, v + 1, numSolutions)) {
+                    return true;
+                }
+                colors[v] = 0; // backtrack
+            }
+        }
+        return false;
+    }
+
+    void graphColoring(int m) {
+        vector<int> colors(V, 0);
+        int numSolutions = 0;
+        if (!graphColoringUtil(m, colors, 0, numSolutions)) {
+            cout << "No solution exists." << endl;
+        }
+    }
+};
+
+int main() {
+    int V, E, m;
+    cout << "Enter the number of vertices: ";
+    cin >> V;
+    cout << "Enter the number of edges: ";
+    cin >> E;
+    cout << "Enter the number of colors: ";
+    cin >> m;
+
+    Graph graph(V);
+
+    cout << "Enter the edges (u v):" << endl;
+    for (int i = 0; i < E; ++i) {
+        int u, v;
+        cin >> u >> v;
+        graph.addEdge(u, v);
+    }
+
+    cout << "Possible colorings:" << endl;
+    graph.graphColoring(m);
+
+    return 0;
+}

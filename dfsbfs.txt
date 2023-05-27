@@ -1,0 +1,105 @@
+#include <bits/stdtr1c++.h>
+using namespace std;
+class Graph
+{
+public:
+	map<int, list<int>> adj;
+	map<int, bool> vis;
+	queue<int> q;
+	stack<int> s;
+	void adjcent(int src, int dist)
+	{
+		adj[src].push_back(dist);
+		adj[dist].push_back(src);
+	}
+
+	void dfs()
+	{
+		if (s.empty())
+		{
+			return;
+		}
+		int node = s.top();
+		s.pop();
+		cout << node << " ";
+		for (int i : adj[node])
+		{
+			if (!vis[i])
+			{
+				vis[i] = true;
+				s.push(i);
+			}
+		}
+		dfs();
+	}
+
+	void bfs()
+	{
+		if (q.empty())
+		{
+			return;
+		}
+		int node = q.front();
+		q.pop();
+		cout << node << " ";
+		for (int i : adj[node])
+		{
+			if (!vis[i])
+			{
+				vis[i] = true;
+				q.push(i);
+			}
+		}
+		bfs();
+	}
+};
+int main()
+{
+	Graph g;
+	int n, s, d, st;
+	int k;
+	cout << "you have choice for user define input  enter 1 else any other number ";
+	cin >> k;
+	if (k == 1)
+	{
+		cout << "Enter number of edge";
+		cin >> n;
+		for (int i = 0; i < n; i++)
+		{
+			cin >> s;
+			cout << " ";
+			cin >> d;
+			g.adjcent(s, d);
+		}
+	}
+	else
+	{
+		g.adjcent(0, 1);
+		g.adjcent(0, 2);
+		g.adjcent(0, 3);
+		g.adjcent(1, 3);
+		g.adjcent(3, 4);
+		g.adjcent(4, 5);
+		g.adjcent(2, 6);
+	}
+
+	cout << "starting vertex ";
+	cin >> st;
+	int choice;
+	cout << "Enter 1 for dfs and any other number for bfs  ";
+	cin >> choice;
+	if (choice == 1)
+	{
+		g.s.push(st);
+		g.vis[st] = true;
+		g.dfs();
+	}
+	else
+	{
+		g.q.push(st);
+		g.vis[st] = true;
+		g.bfs();
+	}
+
+	return 0;
+}

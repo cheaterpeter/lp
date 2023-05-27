@@ -1,0 +1,34 @@
+#include <bits/stdtr1c++.h>
+using namespace std;
+void selection(int arr[],int n){
+    for(int i=0;i<n-1;i++){
+        for(int j=i+1;j<n;j++){
+            if(arr[i]>arr[j]){
+                int temp=arr[i];
+                arr[i]=arr[j];
+                arr[j]=temp;
+            }
+        }
+    }
+}
+void display(int arr[],int n){
+    for(int i=0;i<n;i++){
+        cout<<arr[i]<<" ";
+    }
+}
+int main(){
+    int n;
+    cout<<"Enter number of element "<<endl;
+    cin>>n;
+    int arr[n];
+    for(int i=0;i<n;i++){
+        cin>>arr[i];
+    }
+    cout<<"Before sorting "<<endl;
+    display(arr,n);
+    cout<<"After sorting "<<endl;
+    selection(arr,n);
+    display(arr,n);
+
+return 0;
+}
